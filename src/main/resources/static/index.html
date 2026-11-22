@@ -1,0 +1,2283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAP FINDER - Find Learning Gaps. Build Stronger Futures.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root {
+  --primary-navy: #0f172a;
+  --secondary-navy: #1e293b;
+  --royal-blue: #1d4ed8;
+  --primary-blue: #2563eb;
+  --accent-blue: #38bdf8;
+  --light-blue: #e0f2fe;
+  --bg-soft: #f8fafc;
+  --card-bg: #ffffff;
+  --border-color: #e2e8f0;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --sidebar-width: 260px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+body { background: var(--bg-soft); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+
+/* Helpers */
+.hidden { display: none !important; }
+.flex { display: flex; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+
+/* Badges */
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 600; }
+.badge-blue { background: #dbeafe; color: #1e40af; }
+.badge-red { background: #fee2e2; color: #991b1b; }
+.badge-green { background: #dcfce7; color: #166534; }
+.badge-yellow { background: #fef3c7; color: #92400e; }
+.badge-purple { background: #f3e8ff; color: #6b21a8; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 20px; font-size: 14px; font-weight: 600; border-radius: var(--radius-sm);
+  cursor: pointer; border: 1px solid transparent; transition: all 0.2s ease;
+}
+.btn-primary { background: var(--primary-blue); color: #fff; }
+.btn-primary:hover { background: var(--royal-blue); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-secondary { background: #fff; color: var(--primary-navy); border-color: var(--border-color); }
+.btn-secondary:hover { background: #f1f5f9; }
+.btn-outline { background: transparent; color: var(--primary-blue); border-color: var(--primary-blue); }
+.btn-outline:hover { background: #eff6ff; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-success { background: var(--success); color: #fff; }
+.btn-sm { padding: 6px 12px; font-size: 13px; }
+
+/* Navigation Bar */
+.navbar {
+  background: #ffffff; border-bottom: 1px solid var(--border-color);
+  padding: 14px 5%; display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50; box-shadow: var(--shadow-sm);
+}
+.brand { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 800; color: var(--primary-navy); text-decoration: none; cursor: pointer; }
+.brand i { color: var(--primary-blue); font-size: 24px; }
+.brand span { color: var(--primary-blue); }
+.nav-links { display: flex; align-items: center; gap: 24px; list-style: none; }
+.nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 500; font-size: 15px; transition: color 0.2s; }
+.nav-links a:hover { color: var(--primary-blue); }
+
+/* Landing Hero Section */
+.hero-section {
+  padding: 60px 6% 80px; max-width: 1280px; margin: 0 auto;
+  display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: center;
+}
+.hero-text h1 { font-size: 46px; font-weight: 800; line-height: 1.2; color: var(--primary-navy); margin-bottom: 18px; }
+.hero-text h1 span { color: var(--primary-blue); }
+.hero-subtitle { font-size: 20px; font-weight: 600; color: var(--royal-blue); margin-bottom: 12px; }
+.hero-desc { font-size: 16px; color: var(--text-muted); line-height: 1.6; margin-bottom: 28px; max-width: 540px; }
+.hero-ctas { display: flex; gap: 14px; margin-bottom: 30px; flex-wrap: wrap; }
+.demo-banner {
+  background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-md);
+  padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;
+  max-width: 540px; gap: 10px; flex-wrap: wrap;
+}
+.demo-banner span { font-size: 13px; color: #1e40af; font-weight: 600; }
+.demo-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.hero-visual {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #38bdf8 100%);
+  border-radius: var(--radius-lg); padding: 35px; color: white; box-shadow: var(--shadow-lg);
+  display: flex; flex-direction: column; gap: 20px; position: relative; overflow: hidden;
+}
+.hero-stat-card {
+  background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px);
+  border-radius: var(--radius-md); padding: 18px; border: 1px solid rgba(255, 255, 255, 0.25);
+}
+.hero-stat-card h4 { font-size: 14px; opacity: 0.9; margin-bottom: 6px; }
+.hero-stat-card .value { font-size: 28px; font-weight: 700; }
+
+/* Features & Portal Cards */
+.section-title { text-align: center; font-size: 30px; font-weight: 700; color: var(--primary-navy); margin-bottom: 12px; }
+.section-subtitle { text-align: center; color: var(--text-muted); font-size: 16px; margin-bottom: 40px; }
+.portal-cards-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px; max-width: 1140px; margin: 0 auto 70px; padding: 0 5%;
+}
+.portal-card {
+  background: var(--card-bg); border-radius: var(--radius-lg); padding: 32px 26px;
+  border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; align-items: center;
+}
+.portal-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: #bfdbfe; }
+.portal-icon {
+  width: 68px; height: 68px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 28px; margin-bottom: 18px;
+}
+.portal-icon.student { background: #dbeafe; color: #1d4ed8; }
+.portal-icon.teacher { background: #ede9fe; color: #6d28d9; }
+.portal-icon.parent { background: #dcfce7; color: #15803d; }
+.portal-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 10px; color: var(--primary-navy); }
+.portal-card p { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 22px; flex-grow: 1; }
+
+/* How It Works Grid */
+.steps-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px; max-width: 1140px; margin: 0 auto 80px; padding: 0 5%;
+}
+.step-card {
+  background: #ffffff; border-radius: var(--radius-md); padding: 24px;
+  border-left: 4px solid var(--primary-blue); box-shadow: var(--shadow-sm);
+}
+.step-num { font-size: 13px; font-weight: 700; color: var(--primary-blue); margin-bottom: 8px; text-transform: uppercase; }
+.step-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.step-card p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+/* Auth Modal / Section */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center;
+  z-index: 100; padding: 20px;
+}
+.auth-box {
+  background: #ffffff; border-radius: var(--radius-lg); width: 100%; max-width: 480px;
+  padding: 35px; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto;
+}
+.auth-header { text-align: center; margin-bottom: 24px; position: relative; }
+.auth-close { position: absolute; right: 0; top: 0; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); }
+.role-tabs { display: flex; background: #f1f5f9; border-radius: var(--radius-sm); padding: 4px; margin-bottom: 20px; }
+.role-tab {
+  flex: 1; padding: 8px; border: none; background: transparent; font-weight: 600;
+  font-size: 13px; border-radius: 4px; cursor: pointer; color: var(--text-muted); transition: all 0.2s;
+}
+.role-tab.active { background: #ffffff; color: var(--primary-blue); box-shadow: var(--shadow-sm); }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--primary-navy); }
+.input-with-icon { position: relative; }
+.input-with-icon input, .form-control {
+  width: 100%; padding: 11px 14px; border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm); font-size: 14px; transition: border-color 0.2s; outline: none;
+}
+.input-with-icon input:focus, .form-control:focus { border-color: var(--primary-blue); ring: 2px rgba(37,99,235,0.1); }
+.pwd-toggle { position: absolute; right: 12px; top: 12px; cursor: pointer; color: var(--text-muted); }
+.auth-switch { text-align: center; margin-top: 18px; font-size: 13px; color: var(--text-muted); }
+.auth-switch a { color: var(--primary-blue); font-weight: 600; text-decoration: none; cursor: pointer; }
+
+/* Dashboard Layout */
+.app-container { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-width); background: var(--secondary-navy); color: #fff;
+  display: flex; flex-direction: column; flex-shrink: 0; position: sticky; top: 0; height: 100vh;
+}
+.sidebar-header { padding: 22px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
+.sidebar-header .title { font-size: 18px; font-weight: 800; color: #fff; }
+.sidebar-header .title span { color: var(--accent-blue); }
+.sidebar-nav { list-style: none; padding: 16px 12px; flex-grow: 1; overflow-y: auto; }
+.sidebar-nav li { margin-bottom: 4px; }
+.sidebar-nav a {
+  display: flex; align-items: center; gap: 12px; padding: 11px 14px;
+  color: #94a3b8; text-decoration: none; font-size: 14px; font-weight: 500;
+  border-radius: var(--radius-sm); transition: all 0.2s; cursor: pointer;
+}
+.sidebar-nav a:hover, .sidebar-nav a.active { background: rgba(255,255,255,0.08); color: #ffffff; }
+.sidebar-nav a.active { background: var(--primary-blue); font-weight: 600; }
+.sidebar-nav i { width: 20px; text-align: center; font-size: 16px; }
+.sidebar-footer { padding: 18px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; }
+.user-info { display: flex; align-items: center; gap: 10px; overflow: hidden; }
+.user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary-blue); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; flex-shrink: 0; }
+.user-meta h5 { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-meta span { font-size: 11px; color: #94a3b8; }
+
+.main-content { flex-grow: 1; padding: 30px 35px; overflow-y: auto; max-width: 1400px; margin: 0 auto; width: 100%; }
+.top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 15px; }
+.greeting h2 { font-size: 26px; font-weight: 800; color: var(--primary-navy); }
+.greeting p { color: var(--text-muted); font-size: 14px; margin-top: 2px; }
+
+/* Stat Cards */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px; margin-bottom: 28px; }
+.stat-card {
+  background: var(--card-bg); border-radius: var(--radius-md); padding: 20px;
+  border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 16px;
+}
+.stat-icon {
+  width: 50px; height: 50px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
+}
+.stat-info .stat-val { font-size: 24px; font-weight: 800; color: var(--primary-navy); }
+.stat-info .stat-lbl { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+
+/* Content Cards */
+.card {
+  background: var(--card-bg); border-radius: var(--radius-md); padding: 24px;
+  border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 25px;
+}
+.card-title {
+  font-size: 18px; font-weight: 700; color: var(--primary-navy); margin-bottom: 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+/* Gap Alert Box */
+.gap-item {
+  border: 1px solid #fee2e2; background: #fff5f5; border-radius: var(--radius-sm);
+  padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--danger);
+}
+.gap-item.medium { border-color: #fef3c7; background: #fffbeb; border-left-color: var(--warning); }
+.gap-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
+.gap-title { font-weight: 700; font-size: 15px; color: var(--primary-navy); }
+.gap-reason { font-size: 13px; color: #475569; margin-bottom: 8px; line-height: 1.4; }
+.gap-recommendation { font-size: 13px; font-weight: 600; color: #1e3a8a; background: #eff6ff; padding: 8px 12px; border-radius: 4px; }
+
+/* Table Styles */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+th { background: #f8fafc; padding: 12px 14px; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border-color); font-size: 13px; }
+td { padding: 14px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+tr:hover td { background: #fbfcfe; }
+
+/* Test Screen */
+.quiz-header { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-md); padding: 20px; margin-bottom: 24px; }
+.q-card { background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 22px; margin-bottom: 18px; }
+.q-title { font-weight: 700; font-size: 16px; margin-bottom: 14px; line-height: 1.5; color: var(--primary-navy); }
+.q-options { display: flex; flex-direction: column; gap: 10px; }
+.q-opt {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s; font-size: 14px;
+}
+.q-opt:hover { background: #f8fafc; border-color: var(--primary-blue); }
+.q-opt input[type="radio"] { accent-color: var(--primary-blue); transform: scale(1.1); }
+.q-opt.selected { background: #eff6ff; border-color: var(--primary-blue); font-weight: 600; color: var(--primary-blue); }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .hero-section { grid-template-columns: 1fr; }
+  .card-grid-2 { grid-template-columns: 1fr; }
+  .sidebar { position: fixed; left: -100%; transition: left 0.3s ease; z-index: 100; }
+  .sidebar.open { left: 0; }
+  .mobile-menu-btn { display: block !important; }
+}
+.mobile-menu-btn { display: none; background: none; border: none; font-size: 22px; cursor: pointer; color: var(--primary-navy); }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV (Landing & Public View) -->
+<nav class="navbar" id="publicNav">
+  <div class="brand" onclick="showLanding()">
+    <i class="fa-solid fa-graduation-cap"></i>
+    GAP <span>FINDER</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#howItWorks">How It Works</a></li>
+    <li><a href="#portals">Portals</a></li>
+    <li><a href="javascript:void(0)" onclick="openAuthModal('STUDENT', 'login')">Login</a></li>
+    <li><button class="btn btn-primary btn-sm" onclick="openAuthModal('STUDENT', 'register')">Get Started</button></li>
+  </ul>
+</nav>
+
+<!-- ============================================================ -->
+<!-- 1. LANDING PAGE -->
+<!-- ============================================================ -->
+<div id="landingView">
+  <section class="hero-section">
+    <div class="hero-text">
+      <div class="hero-subtitle"><i class="fa-solid fa-sparkles"></i> AI-Powered Educational Diagnostic Platform</div>
+      <h1>Find Learning Gaps.<br><span>Build Stronger Futures.</span></h1>
+      <p class="hero-desc">
+        GAP FINDER empowers Students, Parents, and Teachers by pinpointing exact conceptual stumbling blocks across subjects, providing actionable diagnostic evidence and guided revision plans.
+      </p>
+      <div class="hero-ctas">
+        <button class="btn btn-primary" onclick="openAuthModal('STUDENT', 'register')">
+          <i class="fa-solid fa-rocket"></i> Start Diagnostic Free
+        </button>
+        <button class="btn btn-secondary" onclick="scrollToPortals()">
+          <i class="fa-solid fa-compass"></i> Explore Portals
+        </button>
+      </div>
+
+      <!-- Quick Demo Login Banner -->
+      <div class="demo-banner">
+        <div>
+          <span><i class="fa-solid fa-key"></i> Quick Demo Accounts:</span>
+        </div>
+        <div class="demo-buttons">
+          <button class="btn btn-sm btn-outline" onclick="quickLogin('student@gapfinder.com', 'Student@123')">Student Demo</button>
+          <button class="btn btn-sm btn-outline" onclick="quickLogin('parent@gapfinder.com', 'Parent@123')">Parent Demo</button>
+          <button class="btn btn-sm btn-outline" onclick="quickLogin('teacher@gapfinder.com', 'Teacher@123')">Teacher Demo</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-purple"><i class="fa-solid fa-brain"></i> Automatic Learning-Gap Engine</span>
+        <span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> Live Real-Time Analytics</span>
+      </div>
+      <div class="hero-stat-card">
+        <h4>Subject Hierarchy Tracing</h4>
+        <div style="font-size:16px; font-weight:600; margin-top:4px;">
+          Subject &rarr; Chapter &rarr; Topic &rarr; Concept
+        </div>
+        <div style="font-size:13px; opacity:0.85; margin-top:4px;">
+          Every question evaluates granular understanding. No false weakness labels.
+        </div>
+      </div>
+      <div class="card-grid-2" style="gap:12px;">
+        <div class="hero-stat-card">
+          <h4>Active Diagnostic Tests</h4>
+          <div class="value">4 Subjects</div>
+          <div style="font-size:12px; opacity:0.85;">Math, Physics, Chem, CS</div>
+        </div>
+        <div class="hero-stat-card">
+          <h4>Gap Resolution</h4>
+          <div class="value">94.8%</div>
+          <div style="font-size:12px; opacity:0.85;">Targeted revision success</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTALS SECTION -->
+  <section id="portals" style="padding: 40px 0;">
+    <h2 class="section-title">Designed for the Complete Learning Circle</h2>
+    <p class="section-subtitle">Dedicated portals tailored with role-based security and customized toolsets.</p>
+    
+    <div class="portal-cards-grid">
+      <!-- Student Card -->
+      <div class="portal-card">
+        <div class="portal-icon student"><i class="fa-solid fa-user-graduate"></i></div>
+        <h3>Student Portal</h3>
+        <p>Take diagnostic tests, discover exact weak concepts, earn achievements, and access customized AI revision guidance.</p>
+        <div class="flex gap-2" style="width:100%;">
+          <button class="btn btn-primary" style="flex:1;" onclick="openAuthModal('STUDENT', 'login')">Student Login</button>
+          <button class="btn btn-secondary" style="flex:1;" onclick="openAuthModal('STUDENT', 'register')">Register</button>
+        </div>
+      </div>
+
+      <!-- Teacher Card -->
+      <div class="portal-card">
+        <div class="portal-icon teacher"><i class="fa-solid fa-chalkboard-user"></i></div>
+        <h3>Teacher Portal</h3>
+        <p>Monitor assigned classes, identify students needing immediate support, analyze topic difficulty, and create customized tests.</p>
+        <div class="flex gap-2" style="width:100%;">
+          <button class="btn btn-primary" style="flex:1;" onclick="openAuthModal('TEACHER', 'login')">Teacher Login</button>
+          <button class="btn btn-secondary" style="flex:1;" onclick="openAuthModal('TEACHER', 'register')">Register</button>
+        </div>
+      </div>
+
+      <!-- Parent Card -->
+      <div class="portal-card">
+        <div class="portal-icon parent"><i class="fa-solid fa-hands-holding-child"></i></div>
+        <h3>Parent Portal</h3>
+        <p>Track your linked child's real academic progress, review identified concept gaps, and receive practical tips to support learning at home.</p>
+        <div class="flex gap-2" style="width:100%;">
+          <button class="btn btn-primary" style="flex:1;" onclick="openAuthModal('PARENT', 'login')">Parent Login</button>
+          <button class="btn btn-secondary" style="flex:1;" onclick="openAuthModal('PARENT', 'register')">Register</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="howItWorks" style="padding: 20px 0 60px;">
+    <h2 class="section-title">How Automatic Gap Detection Works</h2>
+    <p class="section-subtitle">Our evidence-based algorithm analyzes answers across repeated attempts.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">Step 01</div>
+        <h4>Diagnostic Test</h4>
+        <p>Students answer diagnostic questions mapped to specific concepts and topics.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">Step 02</div>
+        <h4>Concept Analysis</h4>
+        <p>Calculates cumulative accuracy across attempts. Requires evidence before flagging weakness.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">Step 03</div>
+        <h4>Clear Diagnostic Reasons</h4>
+        <p>Explains precisely why the student struggled, pinpointing the misunderstanding.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">Step 04</div>
+        <h4>Actionable Revision</h4>
+        <p>Delivers targeted practice questions and concepts to close the gap permanently.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============================================================ -->
+<!-- 2. AUTHENTICATION MODAL -->
+<!-- ============================================================ -->
+<div id="authModal" class="modal-overlay hidden">
+  <div class="auth-box">
+    <div class="auth-header">
+      <button class="auth-close" onclick="closeAuthModal()">&times;</button>
+      <div class="brand" style="justify-content:center; margin-bottom:8px;">
+        <i class="fa-solid fa-graduation-cap"></i> GAP <span>FINDER</span>
+      </div>
+      <h3 id="authModalTitle" style="color:var(--primary-navy); font-size:20px;">Welcome Back</h3>
+      <p id="authModalSubtitle" style="font-size:13px; color:var(--text-muted); margin-top:4px;">Sign in to continue to your dashboard</p>
+    </div>
+
+    <!-- Role Switcher Tabs -->
+    <div class="role-tabs">
+      <button class="role-tab active" id="tabStudent" onclick="switchAuthRole('STUDENT')">Student</button>
+      <button class="role-tab" id="tabTeacher" onclick="switchAuthRole('TEACHER')">Teacher</button>
+      <button class="role-tab" id="tabParent" onclick="switchAuthRole('PARENT')">Parent</button>
+    </div>
+
+    <!-- Notification Alert -->
+    <div id="authAlert" class="badge badge-red hidden" style="width:100%; border-radius:6px; padding:10px; margin-bottom:15px; font-size:13px;"></div>
+
+    <form id="authForm" onsubmit="handleAuthSubmit(event)">
+      <!-- Common Fields -->
+      <div class="form-group hidden" id="fgName">
+        <label>Full Name</label>
+        <input type="text" id="authName" class="form-control" placeholder="e.g. Aarav Sharma">
+      </div>
+
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="authEmail" class="form-control" required placeholder="name@domain.com">
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-with-icon">
+          <input type="password" id="authPassword" class="form-control" required placeholder="••••••••">
+          <i class="fa-solid fa-eye pwd-toggle" onclick="togglePasswordVisibility('authPassword')"></i>
+        </div>
+      </div>
+
+      <!-- Student Registration Specifics -->
+      <div id="studentExtraFields" class="hidden">
+        <div class="form-group">
+          <label>Grade / Class</label>
+          <input type="text" id="authGrade" class="form-control" placeholder="Grade 10" value="Grade 10">
+        </div>
+        <div class="form-group">
+          <label>Section</label>
+          <input type="text" id="authSection" class="form-control" placeholder="A" value="A">
+        </div>
+      </div>
+
+      <!-- Parent Registration Specifics -->
+      <div id="parentExtraFields" class="hidden">
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="authPhone" class="form-control" placeholder="+91 98765 43210">
+        </div>
+        <div class="form-group">
+          <label>Child Link Code (Optional)</label>
+          <input type="text" id="authChildLinkCode" class="form-control" placeholder="e.g. LINK-AARAV10">
+          <small style="font-size:11px; color:var(--text-muted);">You can also link your child later inside the parent dashboard.</small>
+        </div>
+      </div>
+
+      <!-- Teacher Registration Specifics -->
+      <div id="teacherExtraFields" class="hidden">
+        <div class="form-group">
+          <label>Primary Subject</label>
+          <input type="text" id="authSubject" class="form-control" placeholder="Mathematics" value="Mathematics">
+        </div>
+      </div>
+
+      <button type="submit" id="authSubmitBtn" class="btn btn-primary" style="width:100%; margin-top:10px;">
+        Sign In
+      </button>
+
+      <div class="auth-switch">
+        <span id="authSwitchPrompt">Don't have an account?</span>
+        <a id="authSwitchLink" onclick="toggleAuthMode()">Create account</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 3. DASHBOARD VIEW (STUDENT / PARENT / TEACHER) -->
+<!-- ============================================================ -->
+<div id="dashboardView" class="app-container hidden">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="appSidebar">
+    <div class="sidebar-header">
+      <i class="fa-solid fa-graduation-cap" style="color:var(--accent-blue); font-size:22px;"></i>
+      <div class="title">GAP <span>FINDER</span></div>
+    </div>
+
+    <!-- STUDENT SIDEBAR NAV -->
+    <ul class="sidebar-nav" id="studentNav">
+      <li><a class="active" onclick="switchStudentTab('dashboard')"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+      <li><a onclick="switchStudentTab('subjects')"><i class="fa-solid fa-book-open"></i> My Subjects</a></li>
+      <li><a onclick="switchStudentTab('tests')"><i class="fa-solid fa-clipboard-check"></i> Tests & Exams</a></li>
+      <li><a onclick="switchStudentTab('gaps')"><i class="fa-solid fa-triangle-exclamation"></i> Learning Gaps</a></li>
+      <li><a onclick="switchStudentTab('ai')"><i class="fa-solid fa-robot"></i> AI Concept Assistant</a></li>
+      <li><a onclick="switchStudentTab('teachers')"><i class="fa-solid fa-chalkboard-user"></i> My Subject Teachers</a></li>
+      <li><a onclick="switchStudentTab('materials')"><i class="fa-solid fa-file-pdf"></i> Study Materials</a></li>
+      <li><a onclick="switchStudentTab('videos')"><i class="fa-brands fa-youtube"></i> Video Suggestions</a></li>
+      <li><a onclick="switchStudentTab('feedback')"><i class="fa-solid fa-comment-dots"></i> Teacher Feedback</a></li>
+      <li><a onclick="switchStudentTab('achievements')"><i class="fa-solid fa-award"></i> Achievements</a></li>
+    </ul>
+
+    <!-- PARENT SIDEBAR NAV -->
+    <ul class="sidebar-nav hidden" id="parentNav">
+      <li><a class="active" onclick="switchParentTab('dashboard')"><i class="fa-solid fa-gauge"></i> Child Performance</a></li>
+      <li><a onclick="switchParentTab('gaps')"><i class="fa-solid fa-triangle-exclamation"></i> Weak Concepts</a></li>
+      <li><a onclick="switchParentTab('history')"><i class="fa-solid fa-chart-line"></i> Test History</a></li>
+      <li><a onclick="switchParentTab('feedback')"><i class="fa-solid fa-comment-dots"></i> Teacher Feedback</a></li>
+      <li><a onclick="switchParentTab('link')"><i class="fa-solid fa-link"></i> Link Another Child</a></li>
+    </ul>
+
+    <!-- TEACHER SIDEBAR NAV -->
+    <ul class="sidebar-nav hidden" id="teacherNav">
+      <li><a class="active" onclick="switchTeacherTab('dashboard')"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+      <li><a onclick="switchTeacherTab('students')"><i class="fa-solid fa-users"></i> Students List</a></li>
+      <li><a onclick="switchTeacherTab('support')"><i class="fa-solid fa-user-shield"></i> Support Needed</a></li>
+      <li><a onclick="switchTeacherTab('analytics')"><i class="fa-solid fa-chart-pie"></i> Class Analytics</a></li>
+      <li><a onclick="switchTeacherTab('createTest')"><i class="fa-solid fa-circle-plus"></i> Create Test</a></li>
+      <li><a onclick="switchTeacherTab('reviews')"><i class="fa-solid fa-clipboard-check"></i> Review Tests</a></li>
+      <li><a onclick="switchTeacherTab('materials')"><i class="fa-solid fa-file-pdf"></i> Upload Notes</a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="sidebarAvatar">A</div>
+        <div class="user-meta">
+          <h5 id="sidebarUserName">User</h5>
+          <span id="sidebarUserRole">Student</span>
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="handleLogout()" title="Logout" style="padding:6px 10px;">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="main-content">
+    <div class="top-bar">
+      <div class="flex items-center gap-3">
+        <button class="mobile-menu-btn" onclick="toggleMobileSidebar()"><i class="fa-solid fa-bars"></i></button>
+        <div class="greeting">
+          <h2 id="mainGreeting">Good Morning!</h2>
+          <p id="mainSubGreeting">Track learning gaps and accelerate mastery.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div id="roleBadgeContainer"></div>
+        <button class="btn btn-secondary btn-sm" onclick="refreshCurrentDashboard()">
+          <i class="fa-solid fa-rotate"></i> Refresh
+        </button>
+      </div>
+    </div>
+
+    <!-- ****************************************************** -->
+    <!-- STUDENT TABS -->
+    <!-- ****************************************************** -->
+    <div id="studentContainer">
+      <!-- 1. Student Dashboard Overview -->
+      <div id="tabStudentDashboard">
+        <!-- Student Link Code Banner -->
+        <div class="card" style="background:#eff6ff; border-color:#bfdbfe; padding:16px 20px; margin-bottom:20px;">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div class="flex items-center gap-3">
+              <i class="fa-solid fa-key" style="color:var(--primary-blue); font-size:20px;"></i>
+              <div>
+                <strong style="color:#1e3a8a;">Parent Linking Code:</strong>
+                <span id="studentLinkCode" style="font-family:monospace; font-weight:700; background:#fff; padding:4px 8px; border-radius:4px; border:1px solid #bfdbfe; margin-left:6px;">LINK-CODE</span>
+              </div>
+            </div>
+            <button class="btn btn-sm btn-outline" onclick="copyLinkCode()">
+              <i class="fa-regular fa-copy"></i> Copy Code for Parent
+            </button>
+          </div>
+        </div>
+
+        <!-- Metric Stat Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#dbeafe; color:#1d4ed8;"><i class="fa-solid fa-chart-simple"></i></div>
+            <div class="stat-info">
+              <div class="stat-val" id="stuOverallScore">0%</div>
+              <div class="stat-lbl">Overall Performance</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#dcfce7; color:#15803d;"><i class="fa-solid fa-clipboard-check"></i></div>
+            <div class="stat-info">
+              <div class="stat-val" id="stuTestsAttended">0</div>
+              <div class="stat-lbl">Tests Completed</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#fee2e2; color:#b91c1c;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="stat-info">
+              <div class="stat-val" id="stuActiveGapsCount">0</div>
+              <div class="stat-lbl">Active Learning Gaps</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-award"></i></div>
+            <div class="stat-info">
+              <div class="stat-val" id="stuAchievementsCount">0</div>
+              <div class="stat-lbl">Badges Earned</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 Column: Learning Gaps & Strong Concepts -->
+        <div class="card-grid-2">
+          <!-- Active Learning Gaps -->
+          <div class="card">
+            <div class="card-title">
+              <span><i class="fa-solid fa-triangle-exclamation" style="color:var(--danger); margin-right:8px;"></i> Concepts Needing Attention</span>
+              <span class="badge badge-red" id="gapsCountBadge">0 Gaps</span>
+            </div>
+            <div id="stuGapsList">
+              <p style="color:var(--text-muted); font-size:14px;">No active learning gaps recorded. Keep up the great work!</p>
+            </div>
+          </div>
+
+          <!-- Strong Concepts & Study Plan -->
+          <div class="card">
+            <div class="card-title">
+              <span><i class="fa-solid fa-circle-check" style="color:var(--success); margin-right:8px;"></i> Mastered Concepts & Study Plan</span>
+            </div>
+            <div id="stuStrongList" style="margin-bottom:18px;">
+              <p style="color:var(--text-muted); font-size:14px;">Complete diagnostic assessments to evaluate conceptual mastery.</p>
+            </div>
+            <div style="background:#f8fafc; border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:14px;">
+              <h5 style="font-size:14px; color:var(--primary-navy); margin-bottom:6px;"><i class="fa-solid fa-calendar-check" style="color:var(--primary-blue); margin-right:6px;"></i> Recommended Daily Action</h5>
+              <p style="font-size:13px; color:var(--text-muted);" id="stuDailyPlan">
+                Take the Algebra or Java diagnostic test to calibrate your personal revision recommendations.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Test Attempts -->
+        <div class="card">
+          <div class="card-title">
+            <span><i class="fa-solid fa-clock-rotate-left" style="color:var(--primary-blue); margin-right:8px;"></i> Recent Test Attempts</span>
+            <button class="btn btn-outline btn-sm" onclick="switchStudentTab('tests')">View All Tests</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Test Title</th>
+                  <th>Subject</th>
+                  <th>Score</th>
+                  <th>Percentage</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="stuRecentTestsBody">
+                <tr><td colspan="6" style="text-align:center; color:var(--text-muted);">No attempts recorded yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Student My Subjects Tab -->
+      <div id="tabStudentSubjects" class="hidden">
+        <div class="card">
+          <div class="card-title">
+            <span><i class="fa-solid fa-sitemap" style="color:var(--primary-blue); margin-right:8px;"></i> Curriculum Hierarchy & Mastery</span>
+          </div>
+          <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">
+            Subject &rarr; Chapter &rarr; Topic &rarr; Concept breakdown with real-time mastery tracking.
+          </p>
+          <div id="stuSubjectsHierarchy"></div>
+        </div>
+      </div>
+
+      <!-- 3. Student Tests Tab -->
+      <div id="tabStudentTests" class="hidden">
+        <div class="card">
+          <div class="card-title">
+            <span><i class="fa-solid fa-clipboard-list" style="color:var(--primary-blue); margin-right:8px;"></i> Available Diagnostic Assessments</span>
+          </div>
+          <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">
+            Complete diagnostic assessments to trigger the automatic Gap Finder engine.
+          </p>
+          <div id="stuAvailableTestsGrid" class="portal-cards-grid" style="padding:0; margin-bottom:30px;"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span><i class="fa-solid fa-history" style="color:var(--primary-blue); margin-right:8px;"></i> Complete Test History</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Test Title</th>
+                  <th>Subject</th>
+                  <th>Marks Scored</th>
+                  <th>Accuracy</th>
+                  <th>Date Completed</th>
+                </tr>
+              </thead>
+              <tbody id="stuAllTestsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Active Test Taking Screen -->
+      <div id="tabStudentTakingTest" class="hidden">
+        <div class="quiz-header flex items-center justify-between flex-wrap gap-2">
+          <div>
+            <h3 id="activeTestTitle" style="color:var(--primary-navy); font-size:20px;">Diagnostic Test</h3>
+            <span class="badge badge-blue" id="activeTestSubject">Subject</span>
+          </div>
+          <div>
+            <span class="badge badge-purple" id="activeTestDuration"><i class="fa-solid fa-clock"></i> 25 mins</span>
+          </div>
+        </div>
+        <form id="activeQuizForm" onsubmit="handleTestSubmission(event)">
+          <div id="activeTestQuestionsList"></div>
+          <div class="flex items-center justify-between" style="margin-top:20px;">
+            <button type="button" class="btn btn-secondary" onclick="cancelTestTaking()">Exit Test</button>
+            <button type="submit" class="btn btn-primary btn-lg"><i class="fa-solid fa-paper-plane"></i> Submit Assessment</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- 5. Test Result / Review Screen -->
+      <div id="tabStudentTestResult" class="hidden">
+        <div class="card" style="text-align:center; padding:35px 20px;">
+          <div style="font-size:48px; color:var(--primary-blue); margin-bottom:12px;" id="resultStatusIcon">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <h2 id="resultTitle" style="font-size:26px; font-weight:800; color:var(--primary-navy); margin-bottom:8px;">Test Evaluated</h2>
+          <p id="resultScoreSummary" style="font-size:18px; color:var(--royal-blue); font-weight:700; margin-bottom:15px;"></p>
+          <div class="flex justify-between" style="max-width:400px; margin:0 auto 24px;">
+            <div class="stat-card" style="flex:1; margin-right:8px; justify-content:center; text-align:center;">
+              <div>
+                <div class="stat-val" id="resultScoreValue">0</div>
+                <div class="stat-lbl">Marks Scored</div>
+              </div>
+            </div>
+            <div class="stat-card" style="flex:1; justify-content:center; text-align:center;">
+              <div>
+                <div class="stat-val" id="resultPercentageValue">0%</div>
+                <div class="stat-lbl">Accuracy</div>
+              </div>
+            </div>
+          </div>
+          <div id="resultGapsNotice" style="max-width:650px; margin:0 auto 25px; text-align:left;"></div>
+          <button class="btn btn-primary" onclick="switchStudentTab('dashboard')">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span><i class="fa-solid fa-magnifying-glass" style="color:var(--primary-blue); margin-right:8px;"></i> Detailed Question Breakdown & Explanations</span>
+          </div>
+          <div id="resultQuestionsBreakdown"></div>
+        </div>
+      </div>
+
+      <!-- 6. Student AI Concept Assistant Tab -->
+      <div id="tabStudentAI" class="hidden">
+        <div class="card">
+          <div class="card-title">
+            <span><i class="fa-solid fa-robot" style="color:var(--primary-blue); margin-right:8px;"></i> AI Concept Explanation Assistant</span>
+          </div>
+          <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">
+            Struggling with a difficult concept? Select a topic or type in a concept name to receive step-by-step conceptual guidance.
+          </p>
+          <div class="flex gap-2" style="margin-bottom:20px; flex-wrap:wrap;">
+            <input type="text" id="aiConceptInput" class="form-control" style="flex:2; min-width:240px;" placeholder="e.g. Isolating Variables in Multi-Step Equations">
+            <select id="aiSubjectSelect" class="form-control" style="flex:1; min-width:160px;">
+              <option value="Mathematics">Mathematics</option>
+              <option value="Physics">Physics</option>
+              <option value="Chemistry">Chemistry</option>
+              <option value="Computer Science">Computer Science</option>
+            </select>
+            <button class="btn btn-primary" onclick="fetchAIExplanation()"><i class="fa-solid fa-wand-magic-sparkles"></i> Explain</button>
+          </div>
+          <div id="aiExplanationBox" class="hidden" style="background:#f8fafc; border:1px solid var(--border-color); border-radius:var(--radius-md); padding:20px;"></div>
+        </div>
+      </div>
+
+      <!-- 7. Student Achievements Tab -->
+      <div id="tabStudentAchievements" class="hidden">
+        <div class="card">
+          <div class="card-title">
+            <span><i class="fa-solid fa-award" style="color:var(--warning); margin-right:8px;"></i> Your Milestone Badges</span>
+          </div>
+          <div id="stuBadgesGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:18px;"></div>
+        </div>
+      </div>
+
+      <div id="tabStudentTeachers" class="hidden"><div class="card"><div class="card-title">My Subject Teachers</div><div id="studentTeachersList">Loading subject teachers...</div></div></div>
+      <div id="tabStudentMaterials" class="hidden"><div class="card"><div class="card-title">Study Materials</div><div id="studentMaterialsList">Loading study materials...</div></div></div>
+      <div id="tabStudentVideos" class="hidden"><div class="card"><div class="card-title">AI YouTube Learning Suggestions</div><p style="color:var(--text-muted);margin-bottom:14px;">Videos are suggested from your identified learning gaps. Links open YouTube search results for the exact topic.</p><div id="studentVideosList">Loading recommendations...</div></div></div>
+      <div id="tabStudentFeedback" class="hidden"><div class="card"><div class="card-title">Feedback from Your Teachers</div><div id="studentFeedbackList">Loading feedback...</div></div></div>
+    </div>
+
+    <!-- ****************************************************** -->
+    <!-- PARENT TABS -->
+    <!-- ****************************************************** -->
+    <div id="parentContainer" class="hidden">
+      <div id="tabParentDashboard">
+        <!-- Linked Child Banner -->
+        <div class="card" style="background:linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color:#fff; border:none; margin-bottom:24px;">
+          <div class="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <span class="badge badge-purple" style="background:rgba(255,255,255,0.2); color:#fff; margin-bottom:8px;">
+                <i class="fa-solid fa-shield-halved"></i> Verified Child Access
+              </span>
+              <h2 id="parentChildName" style="font-size:24px; font-weight:800;">Child Name</h2>
+              <p id="parentChildMeta" style="font-size:14px; opacity:0.9; margin-top:4px;">Grade 10 • Section A • Greenwood High School</p>
+            </div>
+            <div class="flex gap-2">
+              <button class="btn btn-secondary btn-sm" onclick="switchParentTab('link')">
+                <i class="fa-solid fa-plus"></i> Link Another Child
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#dbeafe; color:#1d4ed8;"><i class="fa-solid fa-percent"></i></div>
+            <div class="stat-info">
+              <div class="stat-val" id="parentOverallScore">0%</div>
+              <div class="stat-lbl">Overall Academic Average</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#dcfce7; color:#15803d;"><i class="fa-solid fa-check-double"></i></div>
+            <div class="stat-info">
+              <div class="stat-val" id="parentTotalTests">0</div>
+              <div class="stat-lbl">Assessments Completed</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#fee2e2; color:#b91c1c;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="stat-info">
+              <div class="stat-val" id="parentWeakCount">0</div>
+              <div class="stat-lbl">Weak Concepts Identified</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-medal"></i></div>
+            <div class="stat-info">
+              <div class="stat-val" id="parentAchievementsCount">0</div>
+              <div class="stat-lbl">Badges Earned</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 Column: Subject Performance Breakdown & Weak Concepts -->
+        <div class="card-grid-2">
+          <!-- Subject Breakdown -->
+          <div class="card">
+            <div class="card-title">
+              <span><i class="fa-solid fa-chart-bar" style="color:var(--primary-blue); margin-right:8px;"></i> Subject-Wise Performance</span>
+            </div>
+            <div style="height:250px; position:relative;">
+              <canvas id="parentSubjectChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Weak Concept Analysis for Parents -->
+          <div class="card">
+            <div class="card-title">
+              <span><i class="fa-solid fa-magnifying-glass-chart" style="color:var(--danger); margin-right:8px;"></i> Areas Needing Home Support</span>
+            </div>
+            <div id="parentWeakConceptsList">
+              <p style="color:var(--text-muted); font-size:14px;">No weak concepts detected. Your child is performing proficiently.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Child Test History -->
+        <div class="card">
+          <div class="card-title">
+            <span><i class="fa-solid fa-clock-rotate-left" style="color:var(--primary-blue); margin-right:8px;"></i> Recent Assessment History</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Test Title</th>
+                  <th>Subject</th>
+                  <th>Score</th>
+                  <th>Accuracy</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="parentTestHistoryBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parent Link Child Tab -->
+      <div id="tabParentFeedback" class="hidden"><div class="card"><div class="card-title">Subject Teacher Feedback</div><p style="color:var(--text-muted);margin-bottom:14px;">Feedback appears after the respective subject teacher approves the test.</p><div id="parentFeedbackList">Loading teacher feedback...</div></div></div>
+      <div id="tabParentLink" class="hidden">
+        <div class="card" style="max-width:550px; margin:0 auto;">
+          <div class="card-title">
+            <span><i class="fa-solid fa-link" style="color:var(--primary-blue); margin-right:8px;"></i> Link Child Account</span>
+          </div>
+          <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">
+            Enter the unique Link Code generated in your child's student dashboard (e.g. LINK-AARAV10) to securely link their records.
+          </p>
+          <div class="form-group">
+            <label>Student Link Code</label>
+            <input type="text" id="parentLinkCodeInput" class="form-control" placeholder="e.g. LINK-AARAV10" style="text-transform:uppercase;">
+          </div>
+          <div id="parentLinkAlert" class="badge badge-red hidden" style="width:100%; padding:10px; margin-bottom:15px; border-radius:6px;"></div>
+          <button class="btn btn-primary" onclick="handleParentLinkChild()" style="width:100%;">
+            <i class="fa-solid fa-link"></i> Verify & Link Child
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ****************************************************** -->
+    <!-- TEACHER TABS -->
+    <!-- ****************************************************** -->
+    <div id="teacherContainer" class="hidden">
+      <!-- 1. Teacher Dashboard -->
+      <div id="tabTeacherDashboard">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#dbeafe; color:#1d4ed8;"><i class="fa-solid fa-user-group"></i></div>
+            <div class="stat-info">
+              <div class="stat-val" id="tchTotalStudents">0</div>
+              <div class="stat-lbl">Assigned Students</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#ede9fe; color:#6d28d9;"><i class="fa-solid fa-chalkboard"></i></div>
+            <div class="stat-info">
+              <div class="stat-val" id="tchTotalClasses">0</div>
+              <div class="stat-lbl">Assigned Classes</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#dcfce7; color:#15803d;"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="stat-info">
+              <div class="stat-val" id="tchClassAverage">0%</div>
+              <div class="stat-lbl">Class Average</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#fee2e2; color:#b91c1c;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="stat-info">
+              <div class="stat-val" id="tchSupportCount">0</div>
+              <div class="stat-lbl">Students Needing Support</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 Column: Common Weak Topics & Action Items -->
+        <div class="card-grid-2">
+          <!-- Most Common Weak Topics Across Class -->
+          <div class="card">
+            <div class="card-title">
+              <span><i class="fa-solid fa-fire" style="color:var(--danger); margin-right:8px;"></i> Common Class Conceptual Gaps</span>
+            </div>
+            <p style="color:var(--text-muted); font-size:13px; margin-bottom:14px;">Topics where multiple students have demonstrated repeated difficulty.</p>
+            <div id="tchCommonGapsList"></div>
+          </div>
+
+          <!-- Class Analytics Preview Chart -->
+          <div class="card">
+            <div class="card-title">
+              <span><i class="fa-solid fa-chart-column" style="color:var(--primary-blue); margin-right:8px;"></i> Subject Performance Overview</span>
+            </div>
+            <div style="height:230px; position:relative;">
+              <canvas id="teacherSubjectChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Students Needing Support High-Priority List -->
+        <div class="card">
+          <div class="card-title">
+            <span><i class="fa-solid fa-user-shield" style="color:var(--danger); margin-right:8px;"></i> Priority Intervention List</span>
+            <button class="btn btn-outline btn-sm" onclick="switchTeacherTab('support')">View Full Details</button>
+          </div>
+          <div class="form-group" style="max-width:320px;margin:14px 0;"><label>View students for subject</label><select id="teacherStudentsSubject" class="form-control" onchange="loadTeacherStudents()"></select></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Student Name</th>
+                  <th>ID</th>
+                  <th>Struggling Concept</th>
+                  <th>Assessment Evidence</th>
+                  <th>Recommended Intervention</th>
+                </tr>
+              </thead>
+              <tbody id="tchSupportPreviewBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Teacher Students List Tab -->
+      <div id="tabTeacherStudents" class="hidden">
+        <div class="card">
+          <div class="card-title">
+            <span><i class="fa-solid fa-users" style="color:var(--primary-blue); margin-right:8px;"></i> Subject-wise Student Roster & Academic Status</span>
+          </div>
+          <div class="form-group" style="max-width:320px;margin:14px 0;"><label>View students for subject</label><select id="teacherStudentsSubject" class="form-control" onchange="loadTeacherStudents()"></select></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Student Name</th>
+                  <th>Student ID</th>
+                  <th>Class</th>
+                  <th>Subject Average</th>
+                  <th>Tests Taken</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="tchStudentsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Teacher Full Support Needed Tab -->
+      <div id="tabTeacherSupport" class="hidden">
+        <div class="card">
+          <div class="card-title">
+            <span><i class="fa-solid fa-triangle-exclamation" style="color:var(--danger); margin-right:8px;"></i> Students Requiring Intervention</span>
+          </div>
+          <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">
+            Automatically detected by the Gap Finder engine based on cumulative accuracy below 60% with 2+ attempts.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Subject</th>
+                  <th>Topic & Concept</th>
+                  <th>Severity</th>
+                  <th>Assessment Evidence</th>
+                  <th>Recommended Action</th>
+                </tr>
+              </thead>
+              <tbody id="tchFullSupportTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Teacher Analytics Tab -->
+      <div id="tabTeacherAnalytics" class="hidden">
+        <div class="card">
+          <div class="card-title">
+            <span><i class="fa-solid fa-chart-pie" style="color:var(--primary-blue); margin-right:8px;"></i> Topic-Wise Class Accuracy</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Topic Name</th>
+                  <th>Subject</th>
+                  <th>Questions Answered</th>
+                  <th>Class Accuracy %</th>
+                </tr>
+              </thead>
+              <tbody id="tchTopicAnalysisBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Teacher Create Test Tab -->
+      <div id="tabTeacherCreateTest" class="hidden">
+        <div class="card" style="max-width:700px; margin:0 auto;">
+          <div class="card-title">
+            <span><i class="fa-solid fa-circle-plus" style="color:var(--primary-blue); margin-right:8px;"></i> Create & Publish New Diagnostic Test</span>
+          </div>
+          <form id="createTestForm" onsubmit="handleCreateTest(event)">
+            <div class="form-group">
+              <label>Test Title</label>
+              <input type="text" id="newTestTitle" class="form-control" required placeholder="e.g. Unit 2: Linear Equations & Word Problems">
+            </div>
+            <div class="card-grid-2">
+              <div class="form-group">
+                <label>Subject</label>
+                <select id="newTestSubject" class="form-control" onchange="loadQuestionsForTestCreation()">
+                  <option value="1">Mathematics</option>
+                  <option value="2">Physics</option>
+                  <option value="3">Chemistry</option>
+                  <option value="4">Computer Science</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Duration (Minutes)</label>
+                <input type="number" id="newTestDuration" class="form-control" value="20" min="5" max="180">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Select Questions to Include (10 marks each)</label>
+              <div id="newTestQuestionsPool" style="max-height:260px; overflow-y:auto; border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:10px;">
+                <p style="color:var(--text-muted); font-size:13px;">Loading questions pool...</p>
+              </div>
+            </div>
+            <div id="createTestAlert" class="badge badge-red hidden" style="width:100%; padding:10px; margin-bottom:15px; border-radius:6px;"></div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">
+              <i class="fa-solid fa-check"></i> Save & Publish Test to Assigned Classes
+            </button>
+          </form>
+        </div>
+        <div class="card" style="max-width:850px;margin:22px auto 0;">
+          <div class="card-title">Create a Test by Typing Your Own Questions</div>
+          <form id="manualTestForm" onsubmit="createManualTeacherTest(event)">
+            <div class="form-group"><label>Test title</label><input id="manualTestTitle" class="form-control" required placeholder="e.g. Algebra Unit Test"></div>
+            <div class="card-grid-2"><div class="form-group"><label>Assigned subject</label><select id="manualTestSubject" class="form-control" onchange="loadManualChapters()" required></select></div><div class="form-group"><label>Chapter</label><select id="manualTestChapter" class="form-control"><option value="">Use first chapter</option></select></div><div class="form-group"><label>Duration (minutes)</label><input id="manualTestDuration" type="number" class="form-control" min="1" max="240" value="30" required></div></div>
+            <div id="manualQuestionsContainer"></div>
+            <button type="button" class="btn btn-secondary" onclick="addManualQuestion()">+ Add another question</button>
+            <div id="manualTestMessage" style="margin:12px 0;"></div>
+            <button type="submit" class="btn btn-primary">Publish teacher-created test</button>
+          </form>
+        </div>
+      </div>
+      <div id="tabTeacherReviews" class="hidden"><div class="card"><div class="card-title">Pending Test Approvals</div><p style="color:var(--text-muted);margin-bottom:14px;">Review submitted tests for your assigned subjects, approve the result and write feedback for the student and parent.</p><div id="teacherReviewsList">Loading pending reviews...</div></div></div>
+      <div id="tabTeacherMaterials" class="hidden"><div class="card" style="max-width:720px;margin:0 auto;"><div class="card-title">Upload Study Notes (PDF)</div><form id="teacherMaterialForm" onsubmit="uploadTeacherMaterial(event)"><div class="form-group"><label>Material title</label><input id="materialTitle" class="form-control" required maxlength="180" placeholder="Chapter 1 notes"></div><div class="form-group"><label>Subject</label><select id="materialSubject" class="form-control" required></select></div><div class="form-group"><label>Chapter (optional)</label><input id="materialChapter" class="form-control" placeholder="Chapter name"></div><div class="form-group"><label>Description</label><textarea id="materialDescription" class="form-control" rows="3" placeholder="Short description"></textarea></div><div class="form-group"><label>PDF file (maximum 15 MB)</label><input id="materialFile" type="file" class="form-control" accept="application/pdf,.pdf" required></div><div id="materialUploadMessage" style="margin:10px 0;"></div><button class="btn btn-primary" type="submit">Upload Notes</button></form></div></div>
+    </div>
+  </main>
+</div>
+
+<!-- ============================================================ -->
+<!-- 4. APPLICATION JAVASCRIPT -->
+<!-- ============================================================ -->
+<script>
+// State management
+let currentUser = null;
+let currentRole = 'STUDENT';
+let authMode = 'login';
+let activeTestId = null;
+let activeTestData = null;
+let parentSubjectChartInstance = null;
+let teacherSubjectChartInstance = null;
+
+// Initialization
+document.addEventListener('DOMContentLoaded', async () => {
+  await checkSession();
+});
+
+// Session check
+async function checkSession() {
+  try {
+    const res = await fetch('/api/auth/me');
+    if (res.ok) {
+      const user = await res.json();
+      onLoginSuccess(user);
+    } else {
+      showLanding();
+    }
+  } catch (e) {
+    showLanding();
+  }
+}
+
+// Navigation View Switchers
+function showLanding() {
+  document.getElementById('publicNav').classList.remove('hidden');
+  document.getElementById('landingView').classList.remove('hidden');
+  document.getElementById('dashboardView').classList.add('hidden');
+}
+
+function showDashboard() {
+  document.getElementById('publicNav').classList.add('hidden');
+  document.getElementById('landingView').classList.add('hidden');
+  document.getElementById('dashboardView').classList.remove('hidden');
+}
+
+function scrollToPortals() {
+  document.getElementById('portals').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Auth Modal Management
+function openAuthModal(role, mode) {
+  currentRole = role;
+  authMode = mode;
+  document.getElementById('authAlert').classList.add('hidden');
+  document.getElementById('authEmail').value = '';
+  document.getElementById('authPassword').value = '';
+
+  switchAuthRole(role);
+  setAuthMode(mode);
+  document.getElementById('authModal').classList.remove('hidden');
+}
+
+function closeAuthModal() {
+  document.getElementById('authModal').classList.add('hidden');
+}
+
+function switchAuthRole(role) {
+  currentRole = role;
+  ['STUDENT', 'TEACHER', 'PARENT'].forEach(r => {
+    const tab = document.getElementById('tab' + r[0] + r.slice(1).toLowerCase());
+    if (tab) tab.classList.toggle('active', r === role);
+  });
+  updateRoleFields();
+}
+
+function setAuthMode(mode) {
+  authMode = mode;
+  const isReg = mode === 'register';
+  document.getElementById('authModalTitle').textContent = isReg ? 'Create Account' : 'Welcome Back';
+  document.getElementById('authModalSubtitle').textContent = isReg ? 'Register to start identifying learning gaps' : 'Sign in to access your customized dashboard';
+  document.getElementById('fgName').classList.toggle('hidden', !isReg);
+  document.getElementById('authSubmitBtn').textContent = isReg ? 'Create Account' : 'Sign In';
+  document.getElementById('authSwitchPrompt').textContent = isReg ? 'Already have an account?' : "Don't have an account?";
+  document.getElementById('authSwitchLink').textContent = isReg ? 'Sign In' : 'Create account';
+  updateRoleFields();
+}
+
+function toggleAuthMode() {
+  setAuthMode(authMode === 'login' ? 'register' : 'login');
+}
+
+function updateRoleFields() {
+  const isReg = authMode === 'register';
+  document.getElementById('studentExtraFields').classList.toggle('hidden', !isReg || currentRole !== 'STUDENT');
+  document.getElementById('parentExtraFields').classList.toggle('hidden', !isReg || currentRole !== 'PARENT');
+  document.getElementById('teacherExtraFields').classList.toggle('hidden', !isReg || currentRole !== 'TEACHER');
+}
+
+function togglePasswordVisibility(fieldId) {
+  const field = document.getElementById(fieldId);
+  if (field) {
+    field.type = field.type === 'password' ? 'text' : 'password';
+  }
+}
+
+// Auth Submission
+async function handleAuthSubmit(e) {
+  e.preventDefault();
+  const alertEl = document.getElementById('authAlert');
+  alertEl.classList.add('hidden');
+
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+
+  if (authMode === 'login') {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Login failed.');
+      closeAuthModal();
+      onLoginSuccess(data.user);
+    } catch (err) {
+      alertEl.textContent = err.message;
+      alertEl.classList.remove('hidden');
+    }
+  } else {
+    const payload = {
+      name: document.getElementById('authName').value.trim(),
+      email,
+      password,
+      role: currentRole
+    };
+    if (currentRole === 'STUDENT') {
+      payload.grade = document.getElementById('authGrade').value.trim();
+      payload.section = document.getElementById('authSection').value.trim();
+    } else if (currentRole === 'PARENT') {
+      payload.phone = document.getElementById('authPhone').value.trim();
+      payload.childLinkCode = document.getElementById('authChildLinkCode').value.trim();
+    } else if (currentRole === 'TEACHER') {
+      payload.subject = document.getElementById('authSubject').value.trim();
+    }
+
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Registration failed.');
+      closeAuthModal();
+      onLoginSuccess(data.user);
+    } catch (err) {
+      alertEl.textContent = err.message;
+      alertEl.classList.remove('hidden');
+    }
+  }
+}
+
+// Quick demo login helper
+async function quickLogin(email, password) {
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Demo login failed');
+    onLoginSuccess(data.user);
+  } catch (err) {
+    alert('Demo login failed: ' + err.message);
+  }
+}
+
+// Post-Login UI Initialization
+function onLoginSuccess(user) {
+  currentUser = user;
+  showDashboard();
+
+  document.getElementById('sidebarUserName').textContent = user.name;
+  document.getElementById('sidebarUserRole').textContent = user.role;
+  document.getElementById('sidebarAvatar').textContent = user.name ? user.name[0].toUpperCase() : 'U';
+
+  const roleBadge = document.getElementById('roleBadgeContainer');
+  roleBadge.innerHTML = `<span class="badge ${user.role === 'STUDENT' ? 'badge-blue' : (user.role === 'TEACHER' ? 'badge-purple' : 'badge-green')}">${user.role} PORTAL</span>`;
+
+  // Toggle role navs and containers
+  document.getElementById('studentNav').classList.toggle('hidden', user.role !== 'STUDENT');
+  document.getElementById('parentNav').classList.toggle('hidden', user.role !== 'PARENT');
+  document.getElementById('teacherNav').classList.toggle('hidden', user.role !== 'TEACHER');
+
+  document.getElementById('studentContainer').classList.toggle('hidden', user.role !== 'STUDENT');
+  document.getElementById('parentContainer').classList.toggle('hidden', user.role !== 'PARENT');
+  document.getElementById('teacherContainer').classList.toggle('hidden', user.role !== 'TEACHER');
+
+  if (user.role === 'STUDENT') {
+    document.getElementById('mainGreeting').textContent = 'Good Morning, ' + user.name + '!';
+    document.getElementById('mainSubGreeting').textContent = 'Find your learning gaps and master difficult concepts.';
+    switchStudentTab('dashboard');
+    loadStudentDashboard();
+  } else if (user.role === 'PARENT') {
+    document.getElementById('mainGreeting').textContent = "My Child's Academic Journey";
+    document.getElementById('mainSubGreeting').textContent = 'Gain transparent insights into conceptual progress and support learning at home.';
+    switchParentTab('dashboard');
+    loadParentDashboard();
+  } else if (user.role === 'TEACHER') {
+    document.getElementById('mainGreeting').textContent = 'Welcome, ' + user.name + '!';
+    document.getElementById('mainSubGreeting').textContent = 'Identify common stumbling blocks across classes and tailor interventions.';
+    switchTeacherTab('dashboard');
+    loadTeacherDashboard();
+  }
+}
+
+async function handleLogout() {
+  await fetch('/api/auth/logout', { method: 'POST' });
+  currentUser = null;
+  showLanding();
+}
+
+function refreshCurrentDashboard() {
+  if (!currentUser) return;
+  if (currentUser.role === 'STUDENT') loadStudentDashboard();
+  else if (currentUser.role === 'PARENT') loadParentDashboard();
+  else if (currentUser.role === 'TEACHER') loadTeacherDashboard();
+}
+
+// ============================================================
+// STUDENT PORTAL FUNCTIONS
+// ============================================================
+function switchStudentTab(tab) {
+  const tabs = ['Dashboard', 'Subjects', 'Tests', 'TakingTest', 'TestResult', 'AI', 'Achievements', 'Teachers', 'Materials', 'Videos', 'Feedback'];
+  tabs.forEach(t => {
+    const el = document.getElementById('tabStudent' + t);
+    if (el) el.classList.toggle('hidden', t.toLowerCase() !== tab.toLowerCase());
+  });
+
+  const navLinks = document.querySelectorAll('#studentNav a');
+  navLinks.forEach(link => {
+    link.classList.toggle('active', link.textContent.toLowerCase().includes(tab.toLowerCase()));
+  });
+
+  if (tab === 'subjects') loadStudentSubjects();
+  if (tab === 'tests') loadStudentTests();
+  if (tab === 'achievements') loadStudentAchievements();
+  if (tab === 'teachers') loadStudentTeachers();
+  if (tab === 'materials') loadStudentMaterials();
+  if (tab === 'videos') loadStudentVideos();
+  if (tab === 'feedback') loadStudentFeedback();
+}
+
+async function loadStudentDashboard() {
+  try {
+    const res = await fetch('/api/student/dashboard');
+    if (!res.ok) throw new Error();
+    const d = await res.json();
+
+    document.getElementById('studentLinkCode').textContent = d.profile.link_code || 'LINK-101';
+    document.getElementById('stuOverallScore').textContent = d.overallPercentage + '%';
+    document.getElementById('stuTestsAttended').textContent = d.testsAttended;
+    document.getElementById('stuActiveGapsCount').textContent = d.activeGaps ? d.activeGaps.length : 0;
+    document.getElementById('gapsCountBadge').textContent = (d.activeGaps ? d.activeGaps.length : 0) + ' Gaps';
+    document.getElementById('stuAchievementsCount').textContent = d.achievementsCount;
+
+    // Render Active Gaps
+    const gapsContainer = document.getElementById('stuGapsList');
+    if (d.activeGaps && d.activeGaps.length > 0) {
+      gapsContainer.innerHTML = d.activeGaps.map(g => `
+        <div class="gap-item ${g.severity === 'MEDIUM' ? 'medium' : ''}">
+          <div class="gap-header">
+            <span class="gap-title">${g.concept_name}</span>
+            <span class="badge ${g.severity === 'HIGH' ? 'badge-red' : 'badge-yellow'}">${g.severity} PRIORITY</span>
+          </div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">
+            <b>Subject:</b> ${g.subject_name} &bull; <b>Topic:</b> ${g.topic_name}
+          </div>
+          <div class="gap-reason"><b>Diagnostic Evidence:</b> ${g.reason}</div>
+          <div class="gap-recommendation"><i class="fa-solid fa-lightbulb"></i> ${g.recommendation}</div>
+        </div>
+      `).join('');
+    } else {
+      gapsContainer.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">No active learning gaps recorded. Keep learning!</p>';
+    }
+
+    // Render Strong Concepts
+    const strongContainer = document.getElementById('stuStrongList');
+    if (d.strongConcepts && d.strongConcepts.length > 0) {
+      strongContainer.innerHTML = d.strongConcepts.map(s => `
+        <div class="flex items-center justify-between" style="padding:10px 0; border-bottom:1px solid #f1f5f9;">
+          <div>
+            <strong style="font-size:14px; color:var(--primary-navy);">${s.concept_name}</strong>
+            <div style="font-size:12px; color:var(--text-muted);">${s.subject_name} &bull; ${s.topic_name}</div>
+          </div>
+          <span class="badge badge-green"><i class="fa-solid fa-star"></i> Proficient (${s.correct_attempts}/${s.total_attempts})</span>
+        </div>
+      `).join('');
+    } else {
+      strongContainer.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">Complete tests to verify proficient concepts.</p>';
+    }
+
+    // Render Recent Tests
+    const testBody = document.getElementById('stuRecentTestsBody');
+    if (d.recentAttempts && d.recentAttempts.length > 0) {
+      testBody.innerHTML = d.recentAttempts.map(a => `
+        <tr>
+          <td><b>${a.test_title}</b></td>
+          <td><span class="badge badge-blue">${a.subject_name}</span></td>
+          <td>${a.score} / ${a.total_marks}</td>
+          <td><b>${a.percentage}%</b></td>
+          <td><span class="badge ${a.percentage >= 40 ? 'badge-green' : 'badge-red'}">${a.percentage >= 40 ? 'Passed' : 'Needs Retake'}</span></td>
+          <td>${new Date(a.completed_at).toLocaleDateString()}</td>
+        </tr>
+      `).join('');
+    } else {
+      testBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">No attempts recorded yet.</td></tr>';
+    }
+
+  } catch (e) {
+    console.error('Error loading student dashboard', e);
+  }
+}
+
+function copyLinkCode() {
+  const code = document.getElementById('studentLinkCode').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    alert('Copied parent linking code: ' + code);
+  });
+}
+
+async function loadStudentSubjects() {
+  try {
+    const res = await fetch('/api/student/subjects');
+    const subjects = await res.json();
+    const container = document.getElementById('stuSubjectsHierarchy');
+
+    container.innerHTML = subjects.map(s => `
+      <div class="card" style="margin-bottom:18px; border-left:4px solid ${s.color};">
+        <div class="flex items-center justify-between" style="margin-bottom:12px;">
+          <div>
+            <h3 style="font-size:18px; font-weight:700; color:var(--primary-navy);">${s.name}</h3>
+            <span class="badge badge-blue">Subject Code: ${s.code}</span>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:20px; font-weight:800; color:var(--primary-blue);">${s.averageScore}%</div>
+            <div style="font-size:12px; color:var(--text-muted);">Overall Mastery</div>
+          </div>
+        </div>
+        <div>
+          ${s.chapters.map(ch => `
+            <div style="background:#f8fafc; border-radius:var(--radius-sm); padding:12px; margin-bottom:10px;">
+              <h4 style="font-size:15px; font-weight:700; margin-bottom:8px; color:var(--primary-navy);">Chapter: ${ch.name}</h4>
+              ${ch.topics.map(t => `
+                <div style="margin-left:14px; margin-bottom:8px;">
+                  <div style="font-size:13px; font-weight:600; color:var(--royal-blue); margin-bottom:4px;">Topic: ${t.name}</div>
+                  <div class="flex gap-2 flex-wrap" style="margin-left:10px;">
+                    ${t.concepts.map(c => `
+                      <span class="badge ${c.status === 'PROFICIENT' ? 'badge-green' : (c.status === 'NEEDS_IMPROVEMENT' ? 'badge-red' : (c.status === 'DEVELOPING' ? 'badge-yellow' : 'badge-blue'))}" title="${c.description}">
+                        ${c.name} (${c.status})
+                      </span>
+                    `).join('')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  } catch (e) {
+    console.error('Error loading subjects', e);
+  }
+}
+
+async function loadStudentTests() {
+  try {
+    const res = await fetch('/api/student/tests');
+    const d = await res.json();
+
+    const availableContainer = document.getElementById('stuAvailableTestsGrid');
+    if (d.available && d.available.length > 0) {
+      availableContainer.innerHTML = d.available.map(t => `
+        <div class="portal-card" style="text-align:left; align-items:flex-start;">
+          <div class="badge badge-blue" style="margin-bottom:10px;">${t.subject_name}</div>
+          <h4 style="font-size:16px; font-weight:700; margin-bottom:8px;">${t.title}</h4>
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">
+            <b>Duration:</b> ${t.duration_minutes} mins &bull; <b>Marks:</b> ${t.total_marks} &bull; <b>Questions:</b> ${t.question_count}
+          </p>
+          <button class="btn btn-primary btn-sm" style="width:100%;" onclick="startTest(${t.id})">
+            <i class="fa-solid fa-play"></i> Start Assessment
+          </button>
+        </div>
+      `).join('');
+    } else {
+      availableContainer.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">No diagnostic assessments currently assigned.</p>';
+    }
+
+    const historyBody = document.getElementById('stuAllTestsBody');
+    if (d.history && d.history.length > 0) {
+      historyBody.innerHTML = d.history.map(h => `
+        <tr>
+          <td><b>${h.test_title}</b></td>
+          <td><span class="badge badge-blue">${h.subject_name}</span></td>
+          <td>${h.score} / ${h.total_marks}</td>
+          <td><b>${h.percentage}%</b></td>
+          <td>${new Date(h.completed_at).toLocaleDateString()}</td>
+        </tr>
+      `).join('');
+    } else {
+      historyBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No attempts recorded yet.</td></tr>';
+    }
+  } catch (e) {
+    console.error('Error loading tests', e);
+  }
+}
+
+async function startTest(testId) {
+  try {
+    const res = await fetch('/api/student/tests/' + testId);
+    if (!res.ok) throw new Error('Could not load test');
+    const test = await res.json();
+
+    activeTestId = testId;
+    activeTestData = test;
+
+    document.getElementById('activeTestTitle').textContent = test.title;
+    document.getElementById('activeTestSubject').textContent = test.subject_name;
+    document.getElementById('activeTestDuration').innerHTML = `<i class="fa-solid fa-clock"></i> ${test.duration_minutes} mins`;
+
+    const qList = document.getElementById('activeTestQuestionsList');
+    qList.innerHTML = test.questions.map((q, idx) => `
+      <div class="q-card">
+        <div class="flex items-center justify-between" style="margin-bottom:10px;">
+          <span class="badge badge-purple">Question ${idx + 1} of ${test.questions.length}</span>
+          <span style="font-size:12px; color:var(--text-muted);">Concept: <b>${q.concept_name}</b> (${q.marks} Marks)</span>
+        </div>
+        <div class="q-title">${q.question_text}</div>
+        <div class="q-options">
+          <label class="q-opt">
+            <input type="radio" name="q_${q.id}" value="A" required>
+            <span><b>A.</b> ${q.option_a}</span>
+          </label>
+          <label class="q-opt">
+            <input type="radio" name="q_${q.id}" value="B" required>
+            <span><b>B.</b> ${q.option_b}</span>
+          </label>
+          <label class="q-opt">
+            <input type="radio" name="q_${q.id}" value="C" required>
+            <span><b>C.</b> ${q.option_c}</span>
+          </label>
+          <label class="q-opt">
+            <input type="radio" name="q_${q.id}" value="D" required>
+            <span><b>D.</b> ${q.option_d}</span>
+          </label>
+        </div>
+      </div>
+    `).join('');
+
+    switchStudentTab('takingtest');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (e) {
+    alert('Failed to start test: ' + e.message);
+  }
+}
+
+function cancelTestTaking() {
+  if (confirm('Are you sure you want to exit? Your answers will not be saved.')) {
+    activeTestId = null;
+    activeTestData = null;
+    switchStudentTab('tests');
+  }
+}
+
+async function handleTestSubmission(e) {
+  e.preventDefault();
+  if (!activeTestData || !activeTestId) return;
+
+  const answers = {};
+  activeTestData.questions.forEach(q => {
+    const selected = document.querySelector(`input[name="q_${q.id}"]:checked`);
+    if (selected) {
+      answers[q.id] = selected.value;
+    }
+  });
+
+  try {
+    const res = await fetch(`/api/student/tests/${activeTestId}/submit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(answers)
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.message || 'Submission failed');
+
+    // Display result screen
+    displayTestResult(result);
+  } catch (err) {
+    alert('Failed to evaluate test: ' + err.message);
+  }
+}
+
+function displayTestResult(result) {
+  switchStudentTab('testresult');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  document.getElementById('resultTitle').textContent = 'Test submitted – Awaiting subject teacher approval';
+  document.getElementById('resultStatusIcon').innerHTML = '<i class="fa-solid fa-clock" style="color:var(--warning);"></i>';
+  document.getElementById('resultScoreSummary').textContent = `Provisional score: ${result.score} out of ${result.totalMarks} marks (${result.percentage}%). Your subject teacher must approve this result before it is shared with your parent.`;
+  document.getElementById('resultScoreValue').textContent = result.score + ' / ' + result.totalMarks;
+  document.getElementById('resultPercentageValue').textContent = result.percentage + '%';
+
+  const gapsNotice = document.getElementById('resultGapsNotice');
+  if (result.detectedGaps && result.detectedGaps.length > 0) {
+    gapsNotice.innerHTML = `
+      <div class="gap-item" style="border-left-color:var(--danger); background:#fff5f5;">
+        <h4 style="color:var(--danger); margin-bottom:6px;"><i class="fa-solid fa-brain"></i> Identified Learning Gaps:</h4>
+        ${result.detectedGaps.map(g => `
+          <div style="margin-bottom:8px; font-size:13px;">
+            <b>${g.conceptName}</b> (${g.topicName}): ${g.reason}<br>
+            <span style="color:#1e3a8a;"><b>Recommendation:</b> ${g.recommendation}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else {
+    gapsNotice.innerHTML = `
+      <div class="gap-item" style="border-left-color:var(--success); background:#f0fdf4;">
+        <h4 style="color:var(--success); margin-bottom:4px;"><i class="fa-solid fa-medal"></i> No New Learning Gaps Detected!</h4>
+        <p style="font-size:13px; color:#166534;">You demonstrated solid conceptual comprehension on this assessment.</p>
+      </div>
+    `;
+  }
+
+  // Render Breakdown
+  const bContainer = document.getElementById('resultQuestionsBreakdown');
+  bContainer.innerHTML = result.breakdown.map((q, idx) => `
+    <div class="card" style="border-left:4px solid ${q.isCorrect ? 'var(--success)' : 'var(--danger)'}; margin-bottom:14px;">
+      <div class="flex items-center justify-between" style="margin-bottom:8px;">
+        <span class="badge ${q.isCorrect ? 'badge-green' : 'badge-red'}">
+          ${q.isCorrect ? 'Correct (+ ' + q.marksEarned + ' Marks)' : 'Incorrect (0 / ' + q.marksPossible + ' Marks)'}
+        </span>
+        <span style="font-size:12px; color:var(--text-muted);">Concept: <b>${q.conceptName}</b></span>
+      </div>
+      <div style="font-size:15px; font-weight:700; margin-bottom:10px; color:var(--primary-navy);">
+        ${idx + 1}. ${q.questionText}
+      </div>
+      <div style="font-size:13px; margin-bottom:8px;">
+        Your Answer: <b style="color:${q.isCorrect ? 'var(--success)' : 'var(--danger)'};">${q.selectedOption}</b> &bull; Correct Answer: <b style="color:var(--success);">Option ${q.correctOption}</b>
+      </div>
+      <div style="background:#f8fafc; padding:10px; border-radius:4px; font-size:13px; color:#334155;">
+        <b>Explanation:</b> ${q.explanation}
+      </div>
+    </div>
+  `).join('');
+}
+
+async function loadStudentAchievements() {
+  try {
+    const res = await fetch('/api/student/achievements');
+    const badges = await res.json();
+    const container = document.getElementById('stuBadgesGrid');
+    if (badges && badges.length > 0) {
+      container.innerHTML = badges.map(b => `
+        <div class="card" style="display:flex; align-items:center; gap:16px;">
+          <div style="width:50px; height:50px; border-radius:50%; background:#fef3c7; color:#b45309; display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0;">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <div>
+            <h4 style="font-size:16px; font-weight:700; color:var(--primary-navy); margin-bottom:4px;">${b.badge_name}</h4>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:6px;">${b.badge_desc}</p>
+            <span style="font-size:11px; color:#94a3b8;">Earned on ${new Date(b.earned_at).toLocaleDateString()}</span>
+          </div>
+        </div>
+      `).join('');
+    } else {
+      container.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">Complete tests and close learning gaps to unlock milestone badges!</p>';
+    }
+  } catch (e) {
+    console.error('Error loading badges', e);
+  }
+}
+
+async function fetchAIExplanation() {
+  const conceptName = document.getElementById('aiConceptInput').value.trim() || 'Algebraic Equations';
+  const subject = document.getElementById('aiSubjectSelect').value;
+  const box = document.getElementById('aiExplanationBox');
+  box.classList.remove('hidden');
+  box.innerHTML = '<p style="color:var(--text-muted); font-size:13px;"><i class="fa-solid fa-spinner fa-spin"></i> Formulating conceptual explanation...</p>';
+
+  try {
+    const res = await fetch('/api/ai/explain-concept', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ conceptName, subject })
+    });
+    const d = await res.json();
+    box.innerHTML = `
+      <div style="font-size:16px; font-weight:700; color:var(--primary-navy); margin-bottom:10px;">
+        <i class="fa-solid fa-lightbulb" style="color:var(--primary-blue);"></i> ${d.concept} (${d.subject})
+      </div>
+      <p style="font-size:14px; line-height:1.6; color:#334155; margin-bottom:14px;">${d.explanation}</p>
+      <h5 style="font-size:13px; font-weight:700; color:var(--royal-blue); margin-bottom:6px;">Key Diagnostic Study Tips:</h5>
+      <ul style="margin-left:20px; font-size:13px; color:#475569; line-height:1.5;">
+        ${d.studyTips.map(t => `<li>${t}</li>`).join('')}
+      </ul>
+    `;
+  } catch (err) {
+    box.innerHTML = '<p style="color:var(--danger); font-size:13px;">Could not retrieve explanation.</p>';
+  }
+}
+
+// ============================================================
+// PARENT PORTAL FUNCTIONS
+// ============================================================
+function switchParentTab(tab) {
+  const tabs = ['Dashboard', 'Gaps', 'History', 'Link', 'Feedback'];
+  tabs.forEach(t => {
+    const el = document.getElementById('tabParent' + t);
+    if (el) el.classList.toggle('hidden', t.toLowerCase() !== tab.toLowerCase());
+  });
+
+  const navLinks = document.querySelectorAll('#parentNav a');
+  navLinks.forEach(link => {
+    link.classList.toggle('active', link.textContent.toLowerCase().includes(tab.toLowerCase()));
+  });
+
+  if (tab === 'dashboard' || tab === 'gaps' || tab === 'history') loadParentDashboard();
+  if (tab === 'feedback') loadParentFeedback();
+}
+
+async function loadParentDashboard() {
+  try {
+    const res = await fetch('/api/parent/dashboard');
+    if (!res.ok) throw new Error();
+    const d = await res.json();
+
+    if (!d.hasLinkedChild) {
+      alert('No child linked to your account yet. Please enter your child\'s Link Code.');
+      switchParentTab('link');
+      return;
+    }
+
+    document.getElementById('parentChildName').textContent = d.activeChild.name;
+    document.getElementById('parentChildMeta').textContent = `${d.activeChild.grade} • Section ${d.activeChild.section} • ${d.activeChild.school} (ID: ${d.activeChild.student_id_code})`;
+
+    document.getElementById('parentOverallScore').textContent = d.overallAverage + '%';
+    document.getElementById('parentTotalTests').textContent = d.totalTests;
+    document.getElementById('parentWeakCount').textContent = d.weakConcepts ? d.weakConcepts.length : 0;
+    document.getElementById('parentAchievementsCount').textContent = d.achievementsCount;
+
+    // Render Weak Concepts
+    const weakList = document.getElementById('parentWeakConceptsList');
+    if (d.weakConcepts && d.weakConcepts.length > 0) {
+      weakList.innerHTML = d.weakConcepts.map(w => `
+        <div class="gap-item ${w.severity === 'MEDIUM' ? 'medium' : ''}">
+          <div class="gap-header">
+            <span class="gap-title">${w.concept_name}</span>
+            <span class="badge ${w.severity === 'HIGH' ? 'badge-red' : 'badge-yellow'}">${w.severity} Priority</span>
+          </div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">
+            <b>Subject:</b> ${w.subject_name} &bull; <b>Topic:</b> ${w.topic_name}
+          </div>
+          <div class="gap-reason"><b>Why child is struggling:</b> ${w.reason}</div>
+          <div class="gap-recommendation"><i class="fa-solid fa-house-chimney"></i> <b>How to help at home:</b> ${w.recommendation}</div>
+        </div>
+      `).join('');
+    } else {
+      weakList.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">No learning gaps identified. Your child is proficient across assessed topics.</p>';
+    }
+
+    // Render Test History
+    const historyBody = document.getElementById('parentTestHistoryBody');
+    if (d.testHistory && d.testHistory.length > 0) {
+      historyBody.innerHTML = d.testHistory.map(h => `
+        <tr>
+          <td><b>${h.test_title}</b></td>
+          <td><span class="badge badge-blue">${h.subject_name}</span></td>
+          <td>${h.score} / ${h.total_marks}</td>
+          <td><b>${h.percentage}%</b></td>
+          <td>${new Date(h.completed_at).toLocaleDateString()}</td>
+        </tr>
+      `).join('');
+    } else {
+      historyBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No assessment records yet.</td></tr>';
+    }
+
+    // Render Chart.js Subject Bar Chart
+    if (d.subjectBreakdown && d.subjectBreakdown.length > 0) {
+      renderParentChart(d.subjectBreakdown);
+    }
+
+  } catch (e) {
+    console.error('Error loading parent dashboard', e);
+  }
+}
+
+function renderParentChart(subjects) {
+  const ctx = document.getElementById('parentSubjectChart');
+  if (!ctx) return;
+  if (parentSubjectChartInstance) parentSubjectChartInstance.destroy();
+
+  const labels = subjects.map(s => s.subject_name);
+  const data = subjects.map(s => s.average_score);
+  const colors = ['#2563eb', '#0284c7', '#059669', '#7c3aed'];
+
+  parentSubjectChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Average Score (%)',
+        data: data,
+        backgroundColor: colors,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true, max: 100 }
+      }
+    }
+  });
+}
+
+async function handleParentLinkChild() {
+  const alertEl = document.getElementById('parentLinkAlert');
+  alertEl.classList.add('hidden');
+  const linkCode = document.getElementById('parentLinkCodeInput').value.trim();
+
+  if (!linkCode) {
+    alertEl.textContent = 'Please enter a valid Link Code.';
+    alertEl.classList.remove('hidden');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/parent/link-child', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ linkCode })
+    });
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.message || 'Linking failed.');
+
+    alert(d.message);
+    document.getElementById('parentLinkCodeInput').value = '';
+    switchParentTab('dashboard');
+  } catch (err) {
+    alertEl.textContent = err.message;
+    alertEl.classList.remove('hidden');
+  }
+}
+
+// ============================================================
+// TEACHER PORTAL FUNCTIONS
+// ============================================================
+function switchTeacherTab(tab) {
+  const tabs = ['Dashboard', 'Students', 'Support', 'Analytics', 'CreateTest', 'Reviews', 'Materials'];
+  tabs.forEach(t => {
+    const el = document.getElementById('tabTeacher' + t);
+    if (el) el.classList.toggle('hidden', t.toLowerCase() !== tab.toLowerCase());
+  });
+
+  const navLinks = document.querySelectorAll('#teacherNav a');
+  navLinks.forEach(link => {
+    link.classList.toggle('active', link.textContent.toLowerCase().includes(tab.toLowerCase()));
+  });
+
+  if (tab === 'dashboard') loadTeacherDashboard();
+  if (tab === 'students') loadTeacherStudents();
+  if (tab === 'support') loadTeacherSupport();
+  if (tab === 'analytics') loadTeacherAnalytics();
+  if (tab === 'createtest') { loadQuestionsForTestCreation(); loadTeacherEnhancements(); }
+  if (tab === 'reviews') loadTeacherReviews();
+  if (tab === 'materials') loadTeacherEnhancements();
+}
+
+async function loadTeacherDashboard() {
+  loadTeacherEnhancements();
+  try {
+    const res = await fetch('/api/teacher/dashboard');
+    if (!res.ok) throw new Error();
+    const d = await res.json();
+
+    document.getElementById('tchTotalStudents').textContent = d.totalStudents;
+    document.getElementById('tchTotalClasses').textContent = d.classes ? d.classes.length : 1;
+    document.getElementById('tchClassAverage').textContent = d.classAverage + '%';
+    document.getElementById('tchSupportCount').textContent = d.studentsNeedingSupport;
+
+    // Common Gaps
+    const commonList = document.getElementById('tchCommonGapsList');
+    if (d.commonGaps && d.commonGaps.length > 0) {
+      commonList.innerHTML = d.commonGaps.map(g => `
+        <div class="flex items-center justify-between" style="padding:10px 0; border-bottom:1px solid #f1f5f9;">
+          <div>
+            <strong style="font-size:14px; color:var(--primary-navy);">${g.concept_name}</strong>
+            <div style="font-size:12px; color:var(--text-muted);">Topic: ${g.topic_name} (${g.subject_name})</div>
+          </div>
+          <span class="badge badge-red">${g.struggling_students_count} Students Struggling</span>
+        </div>
+      `).join('');
+    } else {
+      commonList.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">No common gaps identified across assigned classes.</p>';
+    }
+
+    // Priority Support Preview
+    const resSup = await fetch('/api/teacher/support-needed');
+    const supList = await resSup.json();
+    const supBody = document.getElementById('tchSupportPreviewBody');
+    if (supList && supList.length > 0) {
+      supBody.innerHTML = supList.slice(0, 4).map(s => `
+        <tr>
+          <td><b>${s.student_name}</b></td>
+          <td>${s.student_id_code}</td>
+          <td><span class="badge badge-red">${s.weak_concept}</span></td>
+          <td style="font-size:13px; color:#475569;">${s.assessment_evidence}</td>
+          <td style="font-size:13px; color:var(--royal-blue); font-weight:600;">${s.recommended_intervention}</td>
+        </tr>
+      `).join('');
+    } else {
+      supBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No students currently flagged as needing support.</td></tr>';
+    }
+
+    // Chart.js Subject Analytics
+    const resAnalytics = await fetch('/api/teacher/analytics');
+    const analytics = await resAnalytics.json();
+    if (analytics.subjectStats) {
+      renderTeacherChart(analytics.subjectStats);
+    }
+
+  } catch (e) {
+    console.error('Error loading teacher dashboard', e);
+  }
+}
+
+function renderTeacherChart(subjects) {
+  const ctx = document.getElementById('teacherSubjectChart');
+  if (!ctx) return;
+  if (teacherSubjectChartInstance) teacherSubjectChartInstance.destroy();
+
+  const labels = subjects.map(s => s.subject_name);
+  const data = subjects.map(s => s.class_average);
+
+  teacherSubjectChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Class Average (%)',
+        data: data,
+        backgroundColor: '#2563eb',
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true, max: 100 }
+      }
+    }
+  });
+}
+
+async function loadTeacherStudents() {
+  try {
+    const subjectSelect=document.getElementById('teacherStudentsSubject');
+    if(subjectSelect && !subjectSelect.options.length){
+      const sr=await fetch('/api/portal/teacher/subjects'); const subjects=await sr.json();
+      subjectSelect.innerHTML=subjects.map(x=>`<option value="${x.id}">${x.name}</option>`).join('');
+    }
+    const subjectId=subjectSelect ? subjectSelect.value : '';
+    if(!subjectId) return;
+    const res=await fetch('/api/portal/teacher/students?subjectId='+encodeURIComponent(subjectId));
+    const students=await res.json(); const tbody=document.getElementById('tchStudentsTableBody');
+    if(students && students.length){tbody.innerHTML=students.map(x=>{
+      const score=Number(x.average_score||0); const status=score===0?'No tests yet':(score<60?'Needs Support':(score>=80?'Proficient':'Developing'));
+      return `<tr><td><b>${x.student_name}</b></td><td>${x.student_id_code}</td><td>${x.class_name}</td><td><b>${score.toFixed(1)}%</b></td><td>${x.tests_taken} tests</td><td><span class="badge ${status==='Needs Support'?'badge-red':(status==='Proficient'?'badge-green':'badge-blue')}">${status}</span></td></tr>`;
+    }).join('');}else{tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text-muted);">No students found for this subject in your assigned classes.</td></tr>';}
+  } catch(e){console.error('Error loading subject students',e);}
+}
+
+async function loadTeacherSupport() {
+  try {
+    const res = await fetch('/api/teacher/support-needed');
+    const list = await res.json();
+    const tbody = document.getElementById('tchFullSupportTableBody');
+
+    if (list && list.length > 0) {
+      tbody.innerHTML = list.map(s => `
+        <tr>
+          <td><b>${s.student_name}</b><br><small style="color:var(--text-muted);">${s.student_id_code} • ${s.class_name}</small></td>
+          <td><span class="badge badge-blue">${s.weak_subject}</span></td>
+          <td><b>${s.weak_concept}</b><br><small style="color:var(--text-muted);">Topic: ${s.weak_topic}</small></td>
+          <td><span class="badge ${s.severity === 'HIGH' ? 'badge-red' : 'badge-yellow'}">${s.severity}</span></td>
+          <td style="font-size:13px; color:#334155;">${s.assessment_evidence}</td>
+          <td style="font-size:13px; color:var(--royal-blue); font-weight:600;">${s.recommended_intervention}</td>
+        </tr>
+      `).join('');
+    } else {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">No students currently flagged as needing intervention.</td></tr>';
+    }
+  } catch (e) {
+    console.error('Error loading support needed', e);
+  }
+}
+
+async function loadTeacherAnalytics() {
+  try {
+    const res = await fetch('/api/teacher/analytics');
+    const d = await res.json();
+    const tbody = document.getElementById('tchTopicAnalysisBody');
+
+    if (d.topicAnalysis && d.topicAnalysis.length > 0) {
+      tbody.innerHTML = d.topicAnalysis.map(t => `
+        <tr>
+          <td><b>${t.topic_name}</b></td>
+          <td><span class="badge badge-blue">${t.subject_name}</span></td>
+          <td>${t.total_answers} answers</td>
+          <td>
+            <b>${t.accuracy_percentage}%</b>
+            <span class="badge ${t.accuracy_percentage < 60 ? 'badge-red' : (t.accuracy_percentage >= 80 ? 'badge-green' : 'badge-yellow')}" style="margin-left:6px;">
+              ${t.accuracy_percentage < 60 ? 'Difficult' : (t.accuracy_percentage >= 80 ? 'Mastered' : 'Moderate')}
+            </span>
+          </td>
+        </tr>
+      `).join('');
+    } else {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No topic assessment data available yet.</td></tr>';
+    }
+  } catch (e) {
+    console.error('Error loading analytics', e);
+  }
+}
+
+async function loadQuestionsForTestCreation() {
+  const subjectId = document.getElementById('newTestSubject').value;
+  const poolContainer = document.getElementById('newTestQuestionsPool');
+  poolContainer.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Loading questions pool...</p>';
+
+  try {
+    const res = await fetch('/api/teacher/questions-pool?subjectId=' + subjectId);
+    const questions = await res.json();
+    if (questions && questions.length > 0) {
+      poolContainer.innerHTML = questions.map(q => `
+        <label class="flex items-center gap-2" style="padding:8px 6px; border-bottom:1px solid #f1f5f9; cursor:pointer; font-size:13px;">
+          <input type="checkbox" name="selectedQuestion" value="${q.id}" checked>
+          <span><b>[${q.concept_name}]</b> ${q.question_text}</span>
+        </label>
+      `).join('');
+    } else {
+      poolContainer.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No questions found for this subject.</p>';
+    }
+  } catch (e) {
+    poolContainer.innerHTML = '<p style="color:var(--danger); font-size:13px;">Failed to load questions pool.</p>';
+  }
+}
+
+async function handleCreateTest(e) {
+  e.preventDefault();
+  const alertEl = document.getElementById('createTestAlert');
+  alertEl.classList.add('hidden');
+
+  const title = document.getElementById('newTestTitle').value.trim();
+  const subjectId = Number(document.getElementById('newTestSubject').value);
+  const durationMinutes = Number(document.getElementById('newTestDuration').value);
+
+  const selectedCheckboxes = document.querySelectorAll('input[name="selectedQuestion"]:checked');
+  const questionIds = Array.from(selectedCheckboxes).map(cb => Number(cb.value));
+
+  if (!title) {
+    alertEl.textContent = 'Please provide a test title.';
+    alertEl.classList.remove('hidden');
+    return;
+  }
+  if (questionIds.length === 0) {
+    alertEl.textContent = 'Please select at least one question to include in the test.';
+    alertEl.classList.remove('hidden');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/teacher/tests/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, subjectId, durationMinutes, questionIds })
+    });
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.message || 'Could not create test');
+
+    alert('Test successfully created and published to your assigned classes!');
+    document.getElementById('newTestTitle').value = '';
+    switchTeacherTab('dashboard');
+  } catch (err) {
+    alertEl.textContent = err.message;
+    alertEl.classList.remove('hidden');
+  }
+}
+
+// ================= ENHANCED SUBJECT-BASED PORTAL FEATURES =================
+async function loadTeacherEnhancements() {
+  try {
+    const response = await fetch('/api/portal/teacher/subjects');
+    if (!response.ok) throw new Error('Could not load assigned subjects.');
+    const subjects = await response.json();
+    ['manualTestSubject','materialSubject'].forEach(id => {
+      const select = document.getElementById(id); if (!select) return;
+      const previous = select.value;
+      select.innerHTML = subjects.map(x => `<option value="${x.id}">${x.name}</option>`).join('');
+      if (previous && subjects.some(x => String(x.id) === previous)) select.value = previous;
+    });
+    const poolSelect = document.getElementById('newTestSubject');
+    if (poolSelect && subjects.length) {
+      poolSelect.innerHTML = subjects.map(x => `<option value="${x.id}">${x.name}</option>`).join('');
+    }
+    await loadManualChapters();
+    const questionContainer = document.getElementById('manualQuestionsContainer');
+    if (questionContainer && !questionContainer.children.length) addManualQuestion();
+  } catch (error) { console.error(error); }
+}
+
+let manualQuestionCount = 0;
+async function loadManualChapters(){
+  const subject=document.getElementById('manualTestSubject'); const chapter=document.getElementById('manualTestChapter');
+  if(!subject||!chapter||!subject.value)return;
+  try{const r=await fetch('/api/portal/teacher/chapters?subjectId='+encodeURIComponent(subject.value));const rows=await r.json();chapter.innerHTML='<option value="">Use first chapter</option>'+rows.map(x=>`<option value="${x.id}">${x.name}</option>`).join('');}catch(e){console.error(e);}
+}
+function addManualQuestion() {
+  const container = document.getElementById('manualQuestionsContainer'); if (!container) return;
+  const n = ++manualQuestionCount;
+  const block = document.createElement('div'); block.className='card'; block.style.margin='12px 0';
+  block.innerHTML = `<div class="card-title">Question ${n}</div>
+    <div class="form-group"><label>Question</label><textarea class="form-control mq-text" rows="2" required></textarea></div>
+    <div class="card-grid-2"><div class="form-group"><label>Option A</label><input class="form-control mq-a" required></div><div class="form-group"><label>Option B</label><input class="form-control mq-b" required></div><div class="form-group"><label>Option C</label><input class="form-control mq-c" required></div><div class="form-group"><label>Option D</label><input class="form-control mq-d" required></div></div>
+    <div class="card-grid-2"><div class="form-group"><label>Correct option</label><select class="form-control mq-correct"><option>A</option><option>B</option><option>C</option><option>D</option></select></div><div class="form-group"><label>Marks</label><input type="number" min="1" value="1" class="form-control mq-marks" required></div></div>
+    <div class="form-group"><label>Explanation (optional)</label><input class="form-control mq-explanation"></div>`;
+  container.appendChild(block);
+}
+
+async function createManualTeacherTest(event) {
+  event.preventDefault();
+  const questions = Array.from(document.querySelectorAll('#manualQuestionsContainer .card')).map(card => ({
+    text:card.querySelector('.mq-text').value, a:card.querySelector('.mq-a').value, b:card.querySelector('.mq-b').value,
+    c:card.querySelector('.mq-c').value, d:card.querySelector('.mq-d').value, correct:card.querySelector('.mq-correct').value,
+    marks:Number(card.querySelector('.mq-marks').value), explanation:card.querySelector('.mq-explanation').value
+  }));
+  const message=document.getElementById('manualTestMessage'); message.textContent='Publishing test...';
+  try {
+    const response=await fetch('/api/portal/teacher/tests/manual',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:document.getElementById('manualTestTitle').value,subjectId:Number(document.getElementById('manualTestSubject').value),chapterId:document.getElementById('manualTestChapter').value?Number(document.getElementById('manualTestChapter').value):null,durationMinutes:Number(document.getElementById('manualTestDuration').value),questions})});
+    const data=await response.json(); if(!response.ok) throw new Error(data.message||data.error||'Could not publish test.');
+    message.textContent=data.message; message.style.color='green'; document.getElementById('manualTestForm').reset();
+    document.getElementById('manualQuestionsContainer').innerHTML=''; manualQuestionCount=0; addManualQuestion();
+  } catch(error) { message.textContent=error.message; message.style.color='red'; }
+}
+
+async function loadTeacherReviews() {
+  const container=document.getElementById('teacherReviewsList'); if(!container) return;
+  try {
+    const response=await fetch('/api/portal/teacher/reviews'); if(!response.ok) throw new Error('Could not load reviews.');
+    const reviews=await response.json();
+    if(!reviews.length){container.innerHTML='<p>No pending test approvals.</p>';return;}
+    container.innerHTML=reviews.map(r=>`<div class="card" style="margin:12px 0;"><b>${r.student_name}</b> (${r.student_id_code})<p>${r.test_title} · ${r.subject_name}</p><p>Score: <b>${r.score}/${r.total_marks} (${Number(r.percentage).toFixed(1)}%)</b></p><textarea id="review-feedback-${r.attempt_id}" class="form-control" rows="3" placeholder="Write feedback for student and parent"></textarea><button class="btn btn-success" style="margin-top:8px" onclick="approveTeacherAttempt(${r.attempt_id})">Approve result and share feedback</button></div>`).join('');
+  } catch(error){container.textContent=error.message;}
+}
+async function approveTeacherAttempt(id){
+  const feedback=document.getElementById(`review-feedback-${id}`).value.trim(); if(!feedback){alert('Please write feedback first.');return;}
+  const response=await fetch(`/api/portal/teacher/reviews/${id}/approve`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({feedback})});
+  const data=await response.json(); if(!response.ok){alert(data.message||'Approval failed.');return;} alert(data.message); loadTeacherReviews();
+}
+async function uploadTeacherMaterial(event){
+  event.preventDefault(); const file=document.getElementById('materialFile').files[0]; if(!file){alert('Choose a PDF file.');return;}
+  const form=new FormData(); form.append('title',document.getElementById('materialTitle').value); form.append('subjectId',document.getElementById('materialSubject').value); form.append('chapter',document.getElementById('materialChapter').value); form.append('description',document.getElementById('materialDescription').value); form.append('file',file);
+  const msg=document.getElementById('materialUploadMessage'); msg.textContent='Uploading...';
+  try{const response=await fetch('/api/portal/teacher/materials',{method:'POST',body:form});const data=await response.json();if(!response.ok)throw new Error(data.message||'Upload failed');msg.textContent=data.message;msg.style.color='green';document.getElementById('teacherMaterialForm').reset();}catch(error){msg.textContent=error.message;msg.style.color='red';}
+}
+async function loadStudentTeachers(){
+  const el=document.getElementById('studentTeachersList'); try{const r=await fetch('/api/portal/student/teachers');const rows=await r.json();el.innerHTML=rows.length?rows.map(x=>`<p style="padding:10px;border-bottom:1px solid var(--border-color)"><b>${x.subject_name}</b> — ${x.teacher_name}</p>`).join(''):'No subject teachers have been assigned to your class yet.';}catch(e){el.textContent='Could not load subject teachers.';}
+}
+async function loadStudentMaterials(){
+  const el=document.getElementById('studentMaterialsList');try{const r=await fetch('/api/portal/student/materials');const rows=await r.json();el.innerHTML=rows.length?rows.map(x=>`<div class="card" style="margin:10px 0"><b>${x.title}</b><p>${x.subject_name}${x.chapter?' · '+x.chapter:''}</p><p>${x.description||''}</p><small>Uploaded by ${x.teacher_name}</small><p><a href="/api/portal/student/materials/${x.id}/download" target="_blank" rel="noopener">Download PDF notes</a></p></div>`).join(''):'No study notes uploaded for your class yet.';}catch(e){el.textContent='Could not load study materials.';}
+}
+async function loadStudentVideos(){
+  const el=document.getElementById('studentVideosList');try{const r=await fetch('/api/portal/student/videos');const rows=await r.json();el.innerHTML=rows.length?rows.map(x=>`<div class="card" style="margin:10px 0"><b>${x.subject_name} · ${x.topic_name}</b><p>${x.concept_name}</p><a href="${x.youtubeUrl}" target="_blank" rel="noopener">Find learning videos on YouTube</a></div>`).join(''):'No active learning gaps found. Complete a test to receive topic-based video suggestions.';}catch(e){el.textContent='Could not load video suggestions.';}
+}
+async function loadStudentFeedback(){
+  const el=document.getElementById('studentFeedbackList');try{const r=await fetch('/api/portal/student/feedback');const rows=await r.json();el.innerHTML=rows.length?rows.map(x=>`<div class="card" style="margin:10px 0"><b>${x.student_name} · ${x.subject_name} · ${x.test_title}</b><p>Result: ${x.score}/${x.total_marks} (${Number(x.percentage).toFixed(1)}%)</p><p>${x.feedback}</p><small>Feedback by ${x.teacher_name}</small></div>`).join(''):'No approved teacher feedback yet.';}catch(e){el.textContent='Could not load feedback.';}
+}
+async function loadParentFeedback(){
+  const el=document.getElementById('parentFeedbackList');try{const r=await fetch('/api/portal/parent/feedback');const rows=await r.json();el.innerHTML=rows.length?rows.map(x=>`<div class="card" style="margin:10px 0"><b>${x.subject_name} · ${x.test_title}</b><p>Result: ${x.score}/${x.total_marks} (${Number(x.percentage).toFixed(1)}%)</p><p>${x.feedback}</p><small>Feedback by ${x.teacher_name}</small></div>`).join(''):'No approved teacher feedback yet.';}catch(e){el.textContent='Could not load feedback.';}
+}
+
+function toggleMobileSidebar() {
+  const sidebar = document.getElementById('appSidebar');
+  sidebar.classList.toggle('open');
+}
+</script>
+</body>
+</html>
